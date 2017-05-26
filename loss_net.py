@@ -5,8 +5,8 @@
 # Used for defining and computing:
 # feature reconstruction loss & style reconstruction loss
 
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
 
 
 MEAN_PIXEL = np.array([123.68, 116.779, 103.939]) # RGB
