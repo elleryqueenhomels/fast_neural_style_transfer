@@ -71,16 +71,23 @@ def check(weights, params):
 			idx += 2
 	return True
 
+
+# test
 if __name__ == '__main__':
 	weights = load_from_mat('../pretrained/imagenet-vgg-verydeep-19.mat')
+
 	save_path = '../pretrained/imagenet-vgg-19-weights.npz'
+
 	if os.path.exists(save_path):
 		print('\nThe npz file already exists!')
 	else:
 		save_into_npz(weights, save_path)
 		print('\nSuccessfully save into npz file!')
+
 	params = load_from_npz(save_path)
+
 	print('\nNow begin to check the file...\n')
+	
 	result = check(weights, params)
 	if result:
 		print('All done! The file is correct!\n')
