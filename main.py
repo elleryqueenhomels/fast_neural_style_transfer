@@ -2,36 +2,48 @@
 
 from train import train
 from generate import generate
+from utils import list_images
 
+
+is_training = False
+condition = 1
 
 if __name__ == '__main__':
 	content_weight = 1.0
 	style_weight = 220.0
 	tv_weight = 0.1
 
-	content_targets = ['images/content/lena.png', 'images/content/lena2.png']
 	style_target = 'images/style/starry.jpg'
+	save_path = 'models/starry.ckpt-done'
 
-	SAVE_PATH = 'models/wave.ckpt'
+	if is_training:
+		content_targets = list_images('./images/content')
+		print('\ncontent_targets:\n', content_targets, '\n')
 
-	# train(content_targets, style_target, content_weight, style_weight, tv_weight, save_path=SAVE_PATH, batch_size=2, debug=True)
+		train(content_targets, style_target, content_weight, style_weight, tv_weight, save_path=save_path, batch_size=2, debug=True)
+		print('\nSuccessfully! Done training...\n')
+	else:
+		model_path = save_path
 
-	# print('\nSuccessfully! Done training...\n')
+		if condition == 1:
+			content_targets = list_images('./images/content')
+			generated_images = generate(content_targets, model_path, resize_height=300, resize_width=300, postfix='-starry')
+		elif condition == 2:
+			content_targets = list_images('./images/content')
+			generated_images = generate(content_targets, model_path, postfix='-starry')
+		elif condition == 3:
+			content_targets = ['images/content/lena.png', 'images/content/lena2.png', 'images/content/lena3.png', 'images/content/lena4.png']
+			generated_images = generate(content_targets, model_path, is_same_size=True, postfix='-starry')
+		else:
+			content_targets = 'images/content/scream.jpg'
+			generated_images = generate(content_targets, model_path, postfix='-starry')
 
-	# content_targets = ['images/content/lena.png', 'images/content/lena2.png', 'images/content/lena3.png', 'images/content/lena4.png', 'images/content/lena5.png',]
-	# content_targets = ['images/content/cubist.jpg']
-	content_targets = 'images/content/scream.jpg'
+		print('\ntype(generated_images):', type(generated_images))
+		print('\nlen(generated_images):', len(generated_images), '\n')
 
-	model_path = 'models/wave.ckpt'
+		import matplotlib.pyplot as plt
 
-	generated_images = generate(content_targets, model_path)
-
-	print('\ntype(generated_images):', type(generated_images))
-	print('generated_images.shape:', generated_images.shape, '\n')
-
-	import matplotlib.pyplot as plt
-
-	for img in generated_images:
-		plt.imshow(img)
-		plt.show()
+		for img in generated_images:
+			plt.imshow(img)
+			plt.show()
 

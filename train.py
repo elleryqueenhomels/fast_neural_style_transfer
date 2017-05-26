@@ -6,7 +6,7 @@ import tensorflow as tf
 import image_transform_net as itn
 
 from loss_net import VGG, preprocess
-from utils import get_image, get_batch_images
+from utils import get_images
 
 
 STYLE_LAYERS  = ('relu1_1', 'relu2_1', 'relu3_1', 'relu4_1', 'relu5_1')
@@ -26,7 +26,7 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
 		content_targets_path = content_targets_path[:-mod]
 
 	# retrive the style_target image
-	style_target = get_image(style_target_path) # shape: (1, height, width, channels)
+	style_target = get_images(style_target_path) # shape: (1, height, width, channels)
 
 	# create a pre-trained VGG network
 	vgg = VGG(vgg_path)
@@ -71,7 +71,7 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
 		# ** compute the feature reconstruction loss **
 		content_size = tf.size(content_features[CONTENT_LAYER])
 
-		content_loss = content_weight * 2 * tf.nn.l2_loss(output_net[CONTENT_LAYER] - content_features[CONTENT_LAYER]) / tf.to_float(content_size)
+		content_loss = 2 * tf.nn.l2_loss(output_net[CONTENT_LAYER] - content_features[CONTENT_LAYER]) / tf.to_float(content_size)
 
 		# ** compute the style reconstruction loss **
 		style_losses = []
@@ -85,19 +85,18 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
 			layer_style_loss = 2 * tf.nn.l2_loss(grams - style_gram) / tf.to_float(tf.size(grams))
 			style_losses.append(layer_style_loss)
 
-		style_loss = style_weight * tf.reduce_sum(tf.stack(style_losses))
+		style_loss = tf.reduce_sum(tf.stack(style_losses))
 
 		# ** compute the total variation loss **
 		shape = tf.shape(output_images)
 		height, width = shape[1], shape[2]
 		y = tf.slice(output_images, [0, 0, 0, 0], [-1, height - 1, -1, -1]) - tf.slice(output_images, [0, 1, 0, 0], [-1, -1, -1, -1])
 		x = tf.slice(output_images, [0, 0, 0, 0], [-1, -1, width - 1, -1]) - tf.slice(output_images, [0, 0, 1, 0], [-1, -1, -1, -1])
-		raw_tv_loss = tf.nn.l2_loss(x) / tf.to_float(tf.size(x)) + tf.nn.l2_loss(y) / tf.to_float(tf.size(y))
 
-		tv_loss = tv_weight * raw_tv_loss
+		tv_loss = tf.nn.l2_loss(x) / tf.to_float(tf.size(x)) + tf.nn.l2_loss(y) / tf.to_float(tf.size(y))
 
 		# overall perceptual losses
-		loss = content_loss + style_loss + tv_loss
+		loss = content_weight * content_loss + style_weight * style_loss + tv_weight * tv_loss
 
 		# Training step
 		train_op = tf.train.AdamOptimizer(learning_rate).minimize(loss)
@@ -119,8 +118,8 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
 		for epoch in range(epochs):
 			for batch in range(n_batches):
 				# retrive a batch of content_targets images
-				content_batch = content_targets_path[batch*batch_size:(batch*batch_size + batch_size)]
-				content_batch = get_batch_images(content_batch, input_shape[1], input_shape[2])
+				content_batch_path = content_targets_path[batch*batch_size:(batch*batch_size + batch_size)]
+				content_batch = get_images(content_batch_path, input_shape[1], input_shape[2])
 
 				# run the training step
 				sess.run(train_op, feed_dict={content_images: content_batch})
