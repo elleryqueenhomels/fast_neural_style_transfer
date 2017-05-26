@@ -87,6 +87,7 @@ def transform(image):
 if __name__ == '__main__':
 	image = tf.placeholder(tf.float32, shape=(None, 256, 256, 3), name='x')
 	output = transform(image)
+	
 	print('\ntype(output):', type(output))
 	print('\nSuccessfully!\n')
 
