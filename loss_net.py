@@ -87,8 +87,8 @@ def load_from_npz(weights_path):
 
 
 def load_from_mat(weights_path):
-	import scipy.io
-	data = scipy.io.loadmat(weights_path)
+	from scipy.io import loadmat
+	data = loadmat(weights_path)
 	if not all(i in data for i in ('layers', 'classes', 'normalization')):
 		raise ValueError('You are using the wrong VGG-19 data.')
 	params = data['layers'][0]
