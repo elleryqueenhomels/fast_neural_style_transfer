@@ -2,8 +2,8 @@
 # then save the weights into a npz file.
 
 import numpy as np
-import scipy.io
-import os
+
+from scipy.io import loadmat
 
 
 VGG19_LAYERS = (
@@ -23,7 +23,7 @@ VGG19_LAYERS = (
 
 def load_from_mat(weights_path):
 	# extract the weights which are pre-trained on ImageNet dataset
-	data = scipy.io.loadmat(weights_path)
+	data = loadmat(weights_path)
 	if not all(i in data for i in ('layers', 'classes', 'normalization')):
 		raise ValueError('You are using the wrong VGG-19 data.')
 	weights = data['layers'][0]
@@ -74,11 +74,13 @@ def check(weights, params):
 
 # test
 if __name__ == '__main__':
+	from os.path import exists
+	
 	weights = load_from_mat('../pretrained/imagenet-vgg-verydeep-19.mat')
 
 	save_path = '../pretrained/imagenet-vgg-19-weights.npz'
 
-	if os.path.exists(save_path):
+	if exists(save_path):
 		print('\nThe npz file already exists!')
 	else:
 		save_into_npz(weights, save_path)
