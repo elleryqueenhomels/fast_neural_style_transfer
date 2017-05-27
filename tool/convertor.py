@@ -91,6 +91,7 @@ if __name__ == '__main__':
 	print('\nNow begin to check the file...\n')
 	
 	result = check(weights, params)
+	
 	if result:
 		print('All done! The file is correct!\n')
 	else:
