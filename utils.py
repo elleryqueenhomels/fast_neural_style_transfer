@@ -2,8 +2,8 @@
 
 import tensorflow as tf
 
-from os import listdir
-from os.path import join, splitext
+from os import listdir, mkdir, sep
+from os.path import join, exists, splitext
 
 
 def list_images(directory):
@@ -45,11 +45,14 @@ def get_images(paths, height=None, width=None):
 		return images.eval()
 
 
-def save_images(paths, datas, postfix='-stylized'):
+def save_images(paths, datas, save_path, postfix='-stylized'):
 	if isinstance(paths, str):
 		paths = [paths]
 
 	assert(len(paths) == len(datas))
+
+	if not exists(save_path):
+		mkdir(save_path)
 
 	with tf.Graph().as_default(), tf.Session() as sess:
 
@@ -62,9 +65,12 @@ def save_images(paths, datas, postfix='-stylized'):
 			else:
 				image = tf.image.encode_jpeg(data)
 
+			name, ext = splitext(path)
+			name = name.split(sep)[-1]
 			if postfix is not None:
-				name, ext = splitext(path)
-				path = name + postfix + ext
+				path = join(save_path, name + postfix + ext)
+			else:
+				path = join(save_path, name + ext)
 
 			tf.write_file(path, image).run()
 
