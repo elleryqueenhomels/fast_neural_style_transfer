@@ -20,8 +20,8 @@ SAVE_PATH = 'models/style-transfer-model.ckpt'
 
 def train(content_targets_path, style_target_path, content_weight, style_weight, tv_weight, vgg_path=VGG_PATH, save_path=SAVE_PATH, epochs=2, batch_size=4, learning_rate=1e-3, debug=False, logging_period=1000):
 	if debug:
-		from time import time
-		start_time = time()
+		from datetime import datetime
+		start_time = datetime.now()
 
 	# guarantee the size of content_targets is a multiple of batch_size
 	mod = len(content_targets_path) % batch_size
@@ -115,11 +115,11 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
 		n_batches = len(content_targets_path) // batch_size
 
 		if debug:
-			elapsed_time = time() - start_time
+			elapsed_time = datetime.now() - start_time
 			tf.logging.set_verbosity(tf.logging.INFO)
-			tf.logging.info('Elapsed time for preprocessing before actually train the model: %f secs' % elapsed_time)
+			tf.logging.info('Elapsed time for preprocessing before actually train the model: %s' % elapsed_time)
 			tf.logging.info('Now begin to train the model...')
-			start_time = time()
+			start_time = datetime.now()
 
 		for epoch in range(epochs):
 			for batch in range(n_batches):
@@ -138,9 +138,9 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
 				if debug:
 					is_last_step = (epoch == epochs - 1) and (batch == n_batches - 1)
 					if is_last_step or step % logging_period == 0:
-						elapsed_time = time() - start_time
+						elapsed_time = datetime.now() - start_time
 						_content_loss, _style_loss, _tv_loss, _loss = sess.run([content_loss, style_loss, tv_loss, loss], feed_dict={content_images: content_batch})
-						tf.logging.info('step: %d,  total loss: %f,  elapsed time: %f secs' % (step, _loss, elapsed_time))
+						tf.logging.info('step: %d,  total loss: %f,  elapsed time: %s' % (step, _loss, elapsed_time))
 						tf.logging.info('content loss: %f,  weighted content loss: %f' % (_content_loss, content_weight * _content_loss))
 						tf.logging.info('style loss  : %f,  weighted style loss  : %f' % (_style_loss, style_weight * _style_loss))
 						tf.logging.info('tv loss     : %f,  weighted tv loss     : %f' % (_tv_loss, tv_weight * _tv_loss))
@@ -149,7 +149,7 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
 		saver.save(sess, save_path)
 
 		if debug:
-			elapsed_time = time() - start_time
-			tf.logging.info('Done training! Elapsed time: %f secs' % elapsed_time)
+			elapsed_time = datetime.now() - start_time
+			tf.logging.info('Done training! Elapsed time: %s' % elapsed_time)
 			tf.logging.info('Model is saved to: %s' % save_path)
 
