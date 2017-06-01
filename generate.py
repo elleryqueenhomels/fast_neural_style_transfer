@@ -15,11 +15,10 @@ def generate(contents_path, model_path, is_same_size=False, resize_height=None, 
 		outputs = _handler(contents_path, model_path, resize_height=resize_height, resize_width=resize_width, save_path=save_path, postfix=postfix)
 		return [outputs[i] for i in range(len(outputs))]
 	else:
-		import numpy as np
 		outputs = []
 		for content in contents_path:
 			result = _handler(content, model_path, save_path=save_path, postfix=postfix)
-			outputs.append(np.squeeze(result, axis=0))
+			outputs.append(result[0])
 		return outputs
 
 
