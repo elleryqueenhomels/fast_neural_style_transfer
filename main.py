@@ -2,6 +2,7 @@
 
 from train import train
 from generate import generate
+# from generate2 import generate
 from utils import list_images
 
 
