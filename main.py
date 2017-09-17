@@ -11,7 +11,7 @@ condition = 1
 
 if __name__ == '__main__':
     content_weight = 1.0
-    style_weight = 80.0
+    style_weight = 8.0
     tv_weight = 0.01
 
     style_target = 'images/style/wave.jpg'
@@ -28,16 +28,16 @@ if __name__ == '__main__':
 
         if condition == 1:
             content_targets = list_images('images/content')
-            generated_images = generate(content_targets, model_path, save_path=output_save_path, postfix='-starry')
+            generated_images = generate(content_targets, model_path, save_path=output_save_path, postfix='-wave')
         elif condition == 2:
             content_targets = list_images('images/content')
-            generated_images = generate(content_targets, model_path, save_path=output_save_path, postfix='-starry')
+            generated_images = generate(content_targets, model_path, save_path=output_save_path, postfix='-wave')
         elif condition == 3:
             content_targets = ['images/content/lena.png', 'images/content/lena2.png', 'images/content/lena3.png', 'images/content/lena4.png']
-            generated_images = generate(content_targets, model_path, is_same_size=True, save_path=output_save_path, postfix='-starry')
+            generated_images = generate(content_targets, model_path, is_same_size=True, save_path=output_save_path, postfix='-wave')
         else:
             content_targets = 'images/content/scream.jpg'
-            generated_images = generate(content_targets, model_path, save_path=output_save_path, postfix='-starry')
+            generated_images = generate(content_targets, model_path, save_path=output_save_path, postfix='-wave')
 
         print('\ntype(generated_images):', type(generated_images))
         print('\nlen(generated_images):', len(generated_images), '\n')
