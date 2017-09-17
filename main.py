@@ -6,8 +6,8 @@ from generate import generate
 from utils import list_images
 
 
-STYLE = 'starry'
-IS_TRAINING = False
+STYLE = 'wave'
+IS_TRAINING = True
 
 
 if __name__ == '__main__':
