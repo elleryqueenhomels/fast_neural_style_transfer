@@ -113,14 +113,3 @@ def preprocess(image, mean=MEAN_PIXEL):
 def unprocess(image, mean=MEAN_PIXEL):
     return image + mean
 
-
-# test
-if __name__ == '__main__':
-    weights_path = 'pretrained/imagenet-vgg-19-weights.npz'
-    image = tf.placeholder(tf.float32, shape=(None, 256, 256, 3), name='x')
-
-    vgg = VGG(weights_path)
-    net = vgg.forward(image)
-
-    print('\nSuccessfully!\n')
-
