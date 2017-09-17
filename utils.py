@@ -27,7 +27,7 @@ def get_images(paths, height=None, width=None):
 
     images = []
     for path in paths:
-        image = imread(path)
+        image = imread(path, mode='RGB')
 
         if height is not None and width is not None:
             image = imresize(image, [height, width], interp='nearest')
