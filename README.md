@@ -12,10 +12,9 @@ This code is based on Johnson et al. [Perceptual Losses for Real-Time Style Tran
 - [Microsoft COCO dataset](http://msvocds.blob.core.windows.net/coco2014/train2014.zip)
 
 ## Requirements
-- Python 3.6.0
-- NumPy 1.12.1
-- TensorFlow 1.0.0
-- (Optional) SciPy 0.19.0  if you want to load a matlab file (actually we only use scipy.io.loadmat)
-- (Optional) Matplotlib 2.0.0  if you want to show the stylized images directly
+- Python 3.6.2
+- NumPy 1.13.1
+- TensorFlow 1.3.0
+- SciPy 0.19.1
+- (Optional) Matplotlib 2.0.2  if you want to show the stylized images directly
 
-## ********************* still underdevelopment *********************
