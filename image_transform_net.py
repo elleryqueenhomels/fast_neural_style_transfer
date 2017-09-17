@@ -11,32 +11,37 @@ WEIGHT_INIT_STDDEV = 0.1
 def conv2d(x, input_filters, output_filters, kernel_size, strides, mode='REFLECT'):
     with tf.variable_scope('conv2d') as scope:
 
-        shape = [kernel_size, kernel_size, input_filters, output_filters]
-        # weight = tf.get_variable('weight', shape, initializer=tf.truncated_normal_initializer(stddev=WEIGHT_INIT_STDDEV))
+        shape  = [kernel_size, kernel_size, input_filters, output_filters]
         weight = tf.Variable(tf.truncated_normal(shape, stddev=WEIGHT_INIT_STDDEV), name='weight')
-        padding = kernel_size // 2
+
+        padding  = kernel_size // 2
         x_padded = tf.pad(x, [[0, 0], [padding, padding], [padding, padding], [0, 0]], mode=mode)
+
         return tf.nn.conv2d(x_padded, weight, strides=[1, strides, strides, 1], padding='VALID', name='conv')
 
 
 def conv2d_transpose(x, input_filters, output_filters, kernel_size, strides):
     with tf.variable_scope('conv2d_transpose') as scope:
 
-        shape = [kernel_size, kernel_size, output_filters, input_filters]
-        # weight = tf.get_variable('weight', shape, initializer=tf.truncated_normal_initializer(stddev=WEIGHT_INIT_STDDEV))
+        shape  = [kernel_size, kernel_size, output_filters, input_filters]
         weight = tf.Variable(tf.truncated_normal(shape, stddev=WEIGHT_INIT_STDDEV), name='weight')
 
         batch_size = tf.shape(x)[0]
-        height = tf.shape(x)[1] * strides
-        width = tf.shape(x)[2] * strides
-        output_shape = tf.stack([batch_size, height, width, output_filters])
+        height     = tf.shape(x)[1] * strides
+        width      = tf.shape(x)[2] * strides
+
+        output_shape = [batch_size, height, width, output_filters]
+
         return tf.nn.conv2d_transpose(x, weight, output_shape, strides=[1, strides, strides, 1], name='conv_transpose')
 
 
 def instance_norm(x):
-    epsilon = 1e-9
+    epsilon = 1e-3
+
     mean, var = tf.nn.moments(x, [1, 2], keep_dims=True)
-    return tf.div(tf.subtract(x, mean), tf.sqrt(tf.add(var, epsilon)))
+    x_normed  = tf.div(tf.subtract(x, mean), tf.sqrt(tf.add(var, epsilon)))
+
+    return x_normed
 
 
 def residual(x, filters, kernel_size, strides):
@@ -44,10 +49,13 @@ def residual(x, filters, kernel_size, strides):
 
         conv1 = conv2d(x, filters, filters, kernel_size, strides)
         conv2 = conv2d(tf.nn.relu(conv1), filters, filters, kernel_size, strides)
+
         return x + conv2
 
 
 def transform(image):
+    image = image / 127.5 - 1
+
     # mitigate border effects via padding a little before passing through
     image = tf.pad(image, [[0, 0], [10, 10], [10, 10], [0, 0]], mode='REFLECT')
 
@@ -78,17 +86,9 @@ def transform(image):
 
     # remove border effects via reducing padding
     height = tf.shape(output)[1]
-    width = tf.shape(output)[2]
+    width  = tf.shape(output)[2]
+
     output = tf.slice(output, [0, 10, 10, 0], [-1, height - 20, width - 20, -1])
 
     return output
-
-
-# test
-if __name__ == '__main__':
-    image = tf.placeholder(tf.float32, shape=(None, 256, 256, 3), name='x')
-    output = transform(image)
-    
-    print('\ntype(output):', type(output))
-    print('\nSuccessfully!\n')
 
