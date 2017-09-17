@@ -21,48 +21,46 @@ def generate(contents_path, model_path, is_same_size=False, resize_height=None, 
 
 
 def _handler1(content_path, model_path, resize_height=None, resize_width=None, save_path=None, postfix='-stylized'):
-    with tf.Graph().as_default(), tf.Session() as sess:
-        # get the actual image data, output shape: (num_images, height, width, color_channels)
-        content_target = get_images(sess, content_path, resize_height, resize_width)
+    # get the actual image data, output shape: (num_images, height, width, color_channels)
+    content_target = get_images(content_path, resize_height, resize_width)
 
+    with tf.Graph().as_default(), tf.Session() as sess:
         # build the dataflow graph
         content_image = tf.placeholder(tf.float32, shape=content_target.shape, name='content_image')
 
-        output_image = itn.transform(content_image / 255.0)
+        output_image = itn.transform(content_image)
 
         # restore the trained model and run the style transferring
         saver = tf.train.Saver()
-
         saver.restore(sess, model_path)
+
         output = sess.run(output_image, feed_dict={content_image: content_target})
 
-        if save_path is not None:
-            save_images(sess, content_path, output, save_path, postfix)
+    if save_path is not None:
+        save_images(content_path, output, save_path, postfix)
 
     return output
 
 
 def _handler2(content_path, model_path, save_path=None, postfix='-stylized'):
-    with tf.Graph().as_default():
+    with tf.Graph().as_default(), tf.Session() as sess:
         # build the dataflow graph
         content_image = tf.placeholder(tf.float32, shape=(1, None, None, 3), name='content_image')
 
-        output_image = itn.transform(content_image / 255.0)
+        output_image = itn.transform(content_image)
 
         # restore the trained model and run the style transferring
         saver = tf.train.Saver()
+        saver.restore(sess, model_path)
 
-        with tf.Session() as sess:
-            saver.restore(sess, model_path)
+        output = []
+        for content in content_path:
+            content_target = get_images(content)
+            result = sess.run(output_image, feed_dict={content_image: content_target})
+            output.append(result[0])
 
-            output = []
-            for content in content_path:
-                content_target = get_images(sess, content)
-                result = sess.run(output_image, feed_dict={content_image: content_target})
-                output.append(result[0])
-
-            if save_path is not None:
-                save_images(sess, content_path, output, save_path, postfix)
+    if save_path is not None:
+        save_images(content_path, output, save_path, postfix)
 
     return output
 
