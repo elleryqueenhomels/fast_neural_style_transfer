@@ -14,7 +14,7 @@ def generate(contents_path, model_path, is_same_size=False, resize_height=None, 
 
     if is_same_size or (resize_height is not None and resize_width is not None):
         outputs = _handler1(contents_path, model_path, resize_height=resize_height, resize_width=resize_width, save_path=save_path, postfix=postfix)
-        return outputs.tolist()
+        return list(outputs)
     else:
         outputs = _handler2(contents_path, model_path, save_path=save_path, postfix=postfix)
         return outputs
