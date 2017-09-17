@@ -10,40 +10,43 @@ from loss_net import VGG, preprocess
 from utils import get_images
 
 
-STYLE_LAYERS  = ('relu1_1', 'relu2_1', 'relu3_1', 'relu4_1', 'relu5_1')
+VGG_PATH  = './imagenet-vgg-19-weights.npz'
+SAVE_PATH = 'models/style-transfer-model.ckpt'
+
 CONTENT_LAYER = 'relu4_2'
+STYLE_LAYERS  = ('relu1_1', 'relu2_1', 'relu3_1', 'relu4_1', 'relu5_1')
 
 TRAINING_IMAGE_SHAPE = (256, 256, 3) # (height, width, color_channels)
 
-VGG_PATH = './imagenet-vgg-19-weights.npz'
-SAVE_PATH = 'models/style-transfer-model.ckpt'
+EPOCHS = 2
+BATCH_SIZE = 4
+LEARNING_RATE = 1e-3
 
 
-def train(content_targets_path, style_target_path, content_weight, style_weight, tv_weight, vgg_path=VGG_PATH, save_path=SAVE_PATH, epochs=2, batch_size=4, learning_rate=1e-3, debug=False, logging_period=100):
+def train(content_targets_path, style_target_path, content_weight, style_weight, tv_weight, vgg_path=VGG_PATH, save_path=SAVE_PATH, debug=False, logging_period=100):
     if debug:
         from datetime import datetime
         start_time = datetime.now()
 
-    # guarantee the size of content_targets is a multiple of batch_size
-    mod = len(content_targets_path) % batch_size
+    # guarantee the size of content_targets is a multiple of BATCH_SIZE
+    mod = len(content_targets_path) % BATCH_SIZE
     if mod > 0:
         print('Train set has been trimmed %d samples...' % mod)
         content_targets_path = content_targets_path[:-mod]
 
+    height, width, channels = TRAINING_IMAGE_SHAPE
+    input_shape = (BATCH_SIZE, height, width, channels)
+
     # create a pre-trained VGG network
     vgg = VGG(vgg_path)
 
-    height, width, channels = TRAINING_IMAGE_SHAPE
-    input_shape = (batch_size, height, width, channels)
+    # retrive the style_target image
+    style_target = get_images(style_target_path) # shape: (1, height, width, channels)
+    style_shape  = style_target.shape
 
     # compute the style features
     style_features = {}
     with tf.Graph().as_default(), tf.Session() as sess:
-        # retrive the style_target image
-        style_target = get_images(sess, style_target_path) # shape: (1, height, width, channels)
-
-        style_shape = style_target.shape
-
         style_image = tf.placeholder(tf.float32, shape=style_shape, name='style_image')
 
         # pass style_image through 'pretrained VGG-19 network'
@@ -53,6 +56,7 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
         for style_layer in STYLE_LAYERS:
             features = style_net[style_layer].eval(feed_dict={style_image: style_target})
             features = np.reshape(features, [-1, features.shape[3]])
+
             gram = np.matmul(features.T, features) / features.size
             style_features[style_layer] = gram
 
@@ -69,7 +73,7 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
         content_features[CONTENT_LAYER] = content_net[CONTENT_LAYER]
 
         # pass content_images through 'Image Transform Net'
-        output_images = itn.transform(content_images / 255.0)
+        output_images = itn.transform(content_images)
 
         # pass output_images through 'pretrained VGG-19 network'
         output_imgs_preprocess = preprocess(output_images)
@@ -98,7 +102,7 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
         shape = tf.shape(output_images)
         height, width = shape[1], shape[2]
         y = tf.slice(output_images, [0, 0, 0, 0], [-1, height - 1, -1, -1]) - tf.slice(output_images, [0, 1, 0, 0], [-1, -1, -1, -1])
-        x = tf.slice(output_images, [0, 0, 0, 0], [-1, -1, width - 1, -1]) - tf.slice(output_images, [0, 0, 1, 0], [-1, -1, -1, -1])
+        x = tf.slice(output_images, [0, 0, 0, 0], [-1, -1,  width - 1, -1]) - tf.slice(output_images, [0, 0, 1, 0], [-1, -1, -1, -1])
 
         tv_loss = tf.nn.l2_loss(x) / tf.to_float(tf.size(x)) + tf.nn.l2_loss(y) / tf.to_float(tf.size(y))
 
@@ -106,7 +110,7 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
         loss = content_weight * content_loss + style_weight * style_loss + tv_weight * tv_loss
 
         # Training step
-        train_op = tf.train.AdamOptimizer(learning_rate).minimize(loss)
+        train_op = tf.train.AdamOptimizer(LEARNING_RATE).minimize(loss)
 
         sess.run(tf.global_variables_initializer())
 
@@ -115,7 +119,7 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
 
         # ** Start Training **
         step = 0
-        n_batches = len(content_targets_path) // batch_size
+        n_batches = len(content_targets_path) // BATCH_SIZE
 
         if debug:
             elapsed_time = datetime.now() - start_time
@@ -124,11 +128,11 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
             tf.logging.info('Now begin to train the model...')
             start_time = datetime.now()
 
-        for epoch in range(epochs):
+        for epoch in range(EPOCHS):
             for batch in range(n_batches):
                 # retrive a batch of content_targets images
-                content_batch_path = content_targets_path[batch*batch_size:(batch*batch_size + batch_size)]
-                content_batch = get_images(sess, content_batch_path, input_shape[1], input_shape[2])
+                content_batch_path = content_targets_path[batch*BATCH_SIZE:(batch*BATCH_SIZE + BATCH_SIZE)]
+                content_batch = get_images(content_batch_path, input_shape[1], input_shape[2])
 
                 # run the training step
                 sess.run(train_op, feed_dict={content_images: content_batch})
@@ -139,10 +143,12 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
                     saver.save(sess, save_path, global_step=step)
 
                 if debug:
-                    is_last_step = (epoch == epochs - 1) and (batch == n_batches - 1)
+                    is_last_step = (epoch == EPOCHS - 1) and (batch == n_batches - 1)
+
                     if is_last_step or step % logging_period == 0:
                         elapsed_time = datetime.now() - start_time
                         _content_loss, _style_loss, _tv_loss, _loss = sess.run([content_loss, style_loss, tv_loss, loss], feed_dict={content_images: content_batch})
+
                         tf.logging.info('step: %d,  total loss: %f,  elapsed time: %s' % (step, _loss, elapsed_time))
                         tf.logging.info('content loss: %f,  weighted content loss: %f' % (_content_loss, content_weight * _content_loss))
                         tf.logging.info('style loss  : %f,  weighted style loss  : %f' % (_style_loss, style_weight * _style_loss))
