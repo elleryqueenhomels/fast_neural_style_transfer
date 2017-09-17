@@ -48,7 +48,6 @@ def save_images(paths, datas, save_path, postfix='-stylized'):
     if not exists(save_path):
         mkdir(save_path)
 
-    ops = []
     for i, path in enumerate(paths):
         data = datas[i]
 
