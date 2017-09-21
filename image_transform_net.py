@@ -11,51 +11,47 @@ WEIGHT_INIT_STDDEV = 0.1
 
 
 def conv2d(x, input_filters, output_filters, kernel_size, strides, relu=True, mode='REFLECT'):
-    with tf.variable_scope('conv2d') as scope:
+    shape  = [kernel_size, kernel_size, input_filters, output_filters]
+    weight = tf.Variable(tf.truncated_normal(shape, stddev=WEIGHT_INIT_STDDEV), name='weight')
 
-        shape  = [kernel_size, kernel_size, input_filters, output_filters]
-        weight = tf.Variable(tf.truncated_normal(shape, stddev=WEIGHT_INIT_STDDEV), name='weight')
+    padding  = kernel_size // 2
+    x_padded = tf.pad(x, [[0, 0], [padding, padding], [padding, padding], [0, 0]], mode=mode)
 
-        padding  = kernel_size // 2
-        x_padded = tf.pad(x, [[0, 0], [padding, padding], [padding, padding], [0, 0]], mode=mode)
+    out = tf.nn.conv2d(x_padded, weight, strides=[1, strides, strides, 1], padding='VALID')
 
-        out = tf.nn.conv2d(x_padded, weight, strides=[1, strides, strides, 1], padding='VALID', name='conv')
+    out = instance_norm(out, output_filters)
 
-        out = instance_norm(out, output_filters)
+    if relu:
+        out = tf.nn.relu(out)
 
-        if relu:
-            out = tf.nn.relu(out)
-
-        return out
+    return out
 
 
 def conv2d_transpose(x, input_filters, output_filters, kernel_size, strides):
-    with tf.variable_scope('conv2d_transpose') as scope:
+    shape  = [kernel_size, kernel_size, output_filters, input_filters]
+    weight = tf.Variable(tf.truncated_normal(shape, stddev=WEIGHT_INIT_STDDEV), name='weight')
 
-        shape  = [kernel_size, kernel_size, output_filters, input_filters]
-        weight = tf.Variable(tf.truncated_normal(shape, stddev=WEIGHT_INIT_STDDEV), name='weight')
+    batch_size = tf.shape(x)[0]
+    height     = tf.shape(x)[1] * strides
+    width      = tf.shape(x)[2] * strides
 
-        batch_size = tf.shape(x)[0]
-        height     = tf.shape(x)[1] * strides
-        width      = tf.shape(x)[2] * strides
+    output_shape = [batch_size, height, width, output_filters]
 
-        output_shape = [batch_size, height, width, output_filters]
+    out = tf.nn.conv2d_transpose(x, weight, output_shape, strides=[1, strides, strides, 1])
 
-        out = tf.nn.conv2d_transpose(x, weight, output_shape, strides=[1, strides, strides, 1], name='conv_transpose')
+    out = instance_norm(out, output_filters)
 
-        out = instance_norm(out, output_filters)
+    out = tf.nn.relu(out)
 
-        out = tf.nn.relu(out)
-
-        return out
+    return out
 
 
 def instance_norm(x, num_filters):
     epsilon = 1e-3
 
     shape = [num_filters]
-    scale = tf.Variable(tf.ones(shape))
-    shift = tf.Variable(tf.zeros(shape))
+    scale = tf.Variable(tf.ones(shape) , name='scale')
+    shift = tf.Variable(tf.zeros(shape), name='shift')
 
     mean, var = tf.nn.moments(x, [1, 2], keep_dims=True)
     x_normed  = tf.div(tf.subtract(x, mean), tf.sqrt(tf.add(var, epsilon)))
@@ -64,12 +60,10 @@ def instance_norm(x, num_filters):
 
 
 def residual(x, filters, kernel_size, strides):
-    with tf.variable_scope('residual') as scope:
+    conv1 = conv2d(x, filters, filters, kernel_size, strides)
+    conv2 = conv2d(conv1, filters, filters, kernel_size, strides, relu=False)
 
-        conv1 = conv2d(x, filters, filters, kernel_size, strides)
-        conv2 = conv2d(conv1, filters, filters, kernel_size, strides, relu=False)
-
-        return x + conv2
+    return x + conv2
 
 
 def transform(image):
@@ -85,15 +79,15 @@ def transform(image):
     with tf.variable_scope('conv3'):
         conv3 = conv2d(conv2, 64, 128, 3, 2) # with downsampling
 
-    with tf.variable_scope('res1'):
+    with tf.variable_scope('residual1'):
         res1 = residual(conv3, 128, 3, 1)
-    with tf.variable_scope('res2'):
+    with tf.variable_scope('residual2'):
         res2 = residual(res1, 128, 3, 1)
-    with tf.variable_scope('res3'):
+    with tf.variable_scope('residual3'):
         res3 = residual(res2, 128, 3, 1)
-    with tf.variable_scope('res4'):
+    with tf.variable_scope('residual4'):
         res4 = residual(res3, 128, 3, 1)
-    with tf.variable_scope('res5'):
+    with tf.variable_scope('residual5'):
         res5 = residual(res4, 128, 3, 1)
 
     with tf.variable_scope('deconv1'):
