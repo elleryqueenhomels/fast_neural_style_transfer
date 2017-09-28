@@ -4,6 +4,8 @@
 # Pre-trained on ImageNet dataset
 # Used for defining and computing:
 # feature reconstruction loss & style reconstruction loss
+# This code is a modified version of Anish Athalye's vgg.py
+# https://github.com/anishathalye/neural-style/blob/master/vgg.py
 
 import numpy as np
 import tensorflow as tf
