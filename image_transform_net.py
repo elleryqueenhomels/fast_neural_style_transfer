@@ -1,7 +1,6 @@
 # Image Transformation Network - Deep Residual Convolutional Neural Network
 # Used for Style Transferring
 
-
 from __future__ import division
 
 import tensorflow as tf
