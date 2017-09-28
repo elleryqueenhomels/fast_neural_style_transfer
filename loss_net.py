@@ -5,7 +5,6 @@
 # Used for defining and computing:
 # feature reconstruction loss & style reconstruction loss
 
-
 import numpy as np
 import tensorflow as tf
 
