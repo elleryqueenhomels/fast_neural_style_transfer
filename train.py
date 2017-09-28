@@ -1,7 +1,6 @@
 # Train the Image Transform Net using a fixed VGG19 as a Loss Network
 # The VGG19 is pre-trained on ImageNet dataset
 
-
 import numpy as np
 import tensorflow as tf
 import image_transform_net as itn
@@ -129,6 +128,9 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
             start_time = datetime.now()
 
         for epoch in range(EPOCHS):
+
+            np.random.shuffle(content_targets_path)
+
             for batch in range(n_batches):
                 # retrive a batch of content_targets images
                 content_batch_path = content_targets_path[batch*BATCH_SIZE:(batch*BATCH_SIZE + BATCH_SIZE)]
