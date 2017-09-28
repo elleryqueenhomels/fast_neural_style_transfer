@@ -1,6 +1,5 @@
 # Utility
 
-
 import numpy as np
 
 from os import listdir, mkdir, sep
@@ -39,7 +38,7 @@ def get_images(paths, height=None, width=None):
     return images
 
 
-def save_images(paths, datas, save_path, postfix='-stylized'):
+def save_images(paths, datas, save_path, prefix=None, suffix=None):
     if isinstance(paths, str):
         paths = [paths]
 
@@ -48,16 +47,18 @@ def save_images(paths, datas, save_path, postfix='-stylized'):
     if not exists(save_path):
         mkdir(save_path)
 
+    if prefix is None:
+        prefix = ''
+    if suffix is None:
+        suffix = ''
+
     for i, path in enumerate(paths):
         data = datas[i]
 
         name, ext = splitext(path)
         name = name.split(sep)[-1]
         
-        if postfix is not None:
-            path = join(save_path, name + postfix + ext)
-        else:
-            path = join(save_path, name + ext)
+        path = join(save_path, prefix + name + suffix + ext)
 
         imsave(path, data)
 
