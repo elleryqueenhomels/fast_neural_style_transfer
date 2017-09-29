@@ -9,9 +9,6 @@ from loss_net import VGG, preprocess
 from utils import get_images
 
 
-VGG_PATH  = './imagenet-vgg-19-weights.npz'
-SAVE_PATH = 'models/style-transfer-model.ckpt'
-
 CONTENT_LAYER = 'relu4_2'
 STYLE_LAYERS  = ('relu1_1', 'relu2_1', 'relu3_1', 'relu4_1', 'relu5_1')
 
@@ -22,7 +19,7 @@ BATCH_SIZE = 4
 LEARNING_RATE = 1e-3
 
 
-def train(content_targets_path, style_target_path, content_weight, style_weight, tv_weight, vgg_path=VGG_PATH, save_path=SAVE_PATH, debug=False, logging_period=100):
+def train(content_targets_path, style_target_path, content_weight, style_weight, tv_weight, vgg_path, save_path, debug=False, logging_period=100):
     if debug:
         from datetime import datetime
         start_time = datetime.now()
