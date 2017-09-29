@@ -2,7 +2,7 @@
 
 Generative Neural Methods Based On Model Iteration
 
-## Discription
+## Description
 Using a deep residual convolutional neural network as the image transformation network, and a VGG19 deep convolutional neural network which is pre-trained on ImageNet dataset to define and calculate the perceptual loss functions.<br />For a specific style, we train an image transformation network over Microsoft COCO dataset.<br />After training, we can use the model to transfer the style to any image only needing one forward computation.
 
 This code is based on Johnson et al. [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](https://arxiv.org/abs/1603.08155) [2016.03] and Ulyanov et al. [Instance Normalization: The Missing Ingredient for Fast Stylization](https://arxiv.org/abs/1607.08022) [2016.09].
@@ -40,7 +40,7 @@ This code is based on Johnson et al. [Perceptual Losses for Real-Time Style Tran
     year = {2017},
     publisher = {GitHub},
     journal = {GitHub repository},
-    howpublished = {\url{https://github.com/elleryqueenhomels/fast-neural-style-transfer}},
+    howpublished = {\url{https://github.com/elleryqueenhomels/fast-neural-style-transfer}}
   }
 ```
 
