@@ -9,6 +9,8 @@ from utils import list_images
 
 IS_TRAINING = False
 
+VGG_PATH  = './imagenet-vgg-19-weights.npz'
+
 # format: {'style': [content_weight, style_weight, tv_weight]}
 STYLES = {
     'wave':            [1.0,   7.0, 1e-2],
@@ -39,7 +41,8 @@ if __name__ == '__main__':
             style_target = 'images/style/' + style + '.jpg'
             model_save_path = 'models/' + style + '.ckpt-done'
 
-            train(content_targets, style_target, content_weight, style_weight, tv_weight, save_path=model_save_path, debug=True)
+            train(content_targets, style_target, content_weight, style_weight, tv_weight, 
+                vgg_path=VGG_PATH, save_path=model_save_path, debug=True)
 
             print('\nSuccessfully! Done training style "%s"...\n' % style)
 
@@ -54,7 +57,8 @@ if __name__ == '__main__':
             output_save_path = 'outputs'
 
             content_targets = list_images('images/content')
-            generated_images = generate(content_targets, model_path, save_path=output_save_path, prefix=style + '-')
+            generated_images = generate(content_targets, model_path, save_path=output_save_path, 
+                prefix=style + '-')
 
             print('\ntype(generated_images):', type(generated_images))
             print('\nlen(generated_images):', len(generated_images), '\n')
