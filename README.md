@@ -10,16 +10,16 @@ This code is based on Johnson et al. [Perceptual Losses for Real-Time Style Tran
 ## Results
 | style | output |
 | :----: | :----: |
-|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style/wave.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/wave-Lance.jpg)  |
-|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style/udnie.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/udnie-Lance.jpg)  |
-|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style/escher_sphere.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/escher_sphere-Lance.jpg)  |
-|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style/flower.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/flower-Lance.jpg)  |
-|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style/scream.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/scream-Lance.jpg)  |
-|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style/denoised_starry.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/denoised_starry-Lance.jpg)  |
-|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style/starry_bright.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/starry_bright-Lance.jpg)  |
-|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style/rain_princess.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/rain_princess-Lance.jpg)  |
-|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style/woman_matisse.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/woman_matisse-Lance.jpg)  |
-|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style/mosaic.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/mosaic-Lance.jpg)  |
+|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style_thumb/wave_thumb.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/wave-Lance.jpg)  |
+|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style_thumb/udnie_thumb.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/udnie-Lance.jpg)  |
+|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style_thumb/escher_sphere_thumb.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/escher_sphere-Lance.jpg)  |
+|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style_thumb/flower_thumb.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/flower-Lance.jpg)  |
+|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style_thumb/scream_thumb.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/scream-Lance.jpg)  |
+|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style_thumb/denoised_starry_thumb.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/denoised_starry-Lance.jpg)  |
+|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style_thumb/starry_bright_thumb.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/starry_bright-Lance.jpg)  |
+|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style_thumb/rain_princess_thumb.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/rain_princess-Lance.jpg)  |
+|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style_thumb/woman_matisse_thumb.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/woman_matisse-Lance.jpg)  |
+|![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/images/style_thumb/mosaic_thumb.jpg)|  ![](https://github.com/elleryqueenhomels/fast_neural_style_transfer/blob/master/outputs/mosaic-Lance.jpg)  |
 
 ## Manual
 - The main file `main.py` is a demo, which has already contained training procedure and inferring procedure (inferring means generating stylized images).<br />You can switch these two procedures by changing the flag `IS_TRAINING`.
