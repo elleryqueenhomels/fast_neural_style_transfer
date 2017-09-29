@@ -9,7 +9,7 @@ from utils import list_images
 
 IS_TRAINING = False
 
-
+# format: {'style': [content_weight, style_weight, tv_weight]}
 STYLES = {
     'wave':            [1.0,   7.0, 1e-2],
     'udnie':           [1.0,  12.0, 1e-2],
@@ -28,11 +28,11 @@ if __name__ == '__main__':
 
     if IS_TRAINING:
 
-        content_targets = list_images('../MS_COCO') # path to training dataset
+        content_targets = list_images('./MS_COCO') # path to training dataset
 
         for style in list(STYLES.keys()):
 
-            print('\n\nBegin to train the network with the style "%s"...\n' % style)
+            print('\nBegin to train the network with the style "%s"...\n' % style)
 
             content_weight, style_weight, tv_weight = STYLES[style]
 
@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
         for style in list(STYLES.keys()):
 
-            print('\n\nBegin to generate pictures with the style "%s"...\n' % style)
+            print('\nBegin to generate pictures with the style "%s"...\n' % style)
 
             model_path = 'models/' + style + '.ckpt-done'
             output_save_path = 'outputs'
