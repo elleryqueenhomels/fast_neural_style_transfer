@@ -12,15 +12,15 @@ IS_TRAINING = False
 
 STYLES = {
     'wave':            [1.0,   7.0, 1e-2],
-    'mosaic':          [1.0,   5.0,  0.0],
-    'denoised_starry': [1.0,  16.0, 1e-2],
+    'udnie':           [1.0,  12.0, 1e-2],
     'escher_sphere':   [1.0,  60.0, 1e-2],
     'flower':          [1.0,  10.0, 1e-2],
+    'scream':          [1.0,  60.0, 1e-2],
+    'denoised_starry': [1.0,  16.0, 1e-2],
     'starry_bright':   [1.0,   6.0, 1e-2],
-    'udnie':           [1.0,  12.0, 1e-2],
     'rain_princess':   [1.0,   8.0, 1e-2],
     'woman_matisse':   [1.0,  20.0, 1e-2],
-    'scream':          [1.0,  60.0, 1e-2],
+    'mosaic':          [1.0,   5.0,  0.0],
 }
 
 
