@@ -7,6 +7,12 @@ Using a deep residual convolutional neural network as the image transformation n
 
 This code is based on Johnson et al. [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](https://arxiv.org/abs/1603.08155) [2016.03] and Ulyanov et al. [Instance Normalization: The Missing Ingredient for Fast Stylization](https://arxiv.org/abs/1607.08022) [2016.09].
 
+## Results
+<div align="center">
+<img src="https://github.com/elleryqueenhomels/fast_neural_style_transfer/tree/master/images/style/udnie.jpg" width="250px">
+<img src="https://github.com/elleryqueenhomels/fast_neural_style_transfer/tree/master/outputs/udnie-Lance.jpg" width="250px">
+</div>
+
 ## Manual
 - The main file `main.py` is a demo, which has already contained training procedure and inferring procedure (inferring means generating stylized images).<br />You can switch these two procedures by changing the flag `IS_TRAINING`.
 - By default,<br />(1) The content images lie in the folder `"./images/content/"`<br />(2) The style images lie in the folder `"./images/style/"`<br />(3) The weights file of the pre-trained VGG-19 lies in the current working directory. (See `Prerequisites` below)<br />(4) The MS-COCO images dataset for training lies in the folder `"./MS_COCO/"` (See `Prerequisites` below)<br />(5) The checkpoint files of trained models lie in the folder `"./models/"` (You should create this folder by yourself before training)<br />(6) After inferring procedure, the stylized images will be generated and put in the folder `"./outputs/"`
