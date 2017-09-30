@@ -26,7 +26,7 @@ STYLES = {
 }
 
 
-if __name__ == '__main__':
+def main():
 
     if IS_TRAINING:
 
@@ -62,4 +62,8 @@ if __name__ == '__main__':
 
             print('\ntype(generated_images):', type(generated_images))
             print('\nlen(generated_images):', len(generated_images), '\n')
+
+
+if __name__ == '__main__':
+    main()
 
