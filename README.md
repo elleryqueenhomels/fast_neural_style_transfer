@@ -49,11 +49,11 @@ This code is based on Johnson et al. [Perceptual Losses for Real-Time Style Tran
 - Of course, you can organize all the files and folders as you want, and what you need to do is just modifying the `main.py` file.
 
 ## Prerequisites
-- [Pre-trained VGG19 network](http://www.vlfeat.org/matconvnet/models/beta16/imagenet-vgg-verydeep-19.mat) (MD5 `8ee3263992981a1d26e73b3ca028a123`) <br/><b>I have provided a convertor in the `tool` folder. It can convert the matlab file into a npz file which is much smaller and easier to process via NumPy.</b> <br/><b>Or simply download my pre-processed</b> [Pre-trained VGG19 network npz format](http://pan.baidu.com/s/1nv4ZQI1) (MD5 `c7ddd13b12e40033b5031ff43e467065`) <b>The npz format is about 80MB while the mat format is about 550MB.</b>
+- [Pre-trained VGG19 network](http://www.vlfeat.org/matconvnet/models/beta16/imagenet-vgg-verydeep-19.mat) (MD5 `8ee3263992981a1d26e73b3ca028a123`) <br/><b>I have provided a convertor in the `tool` folder. It can convert the matlab file into a npz file which is much smaller and easier to process via NumPy.</b> <br/><b>Or simply download my pre-processed</b> [Pre-trained VGG19 network npz format](https://s3-us-west-2.amazonaws.com/wengaoye/imagenet-vgg-19-weights.npz) (MD5 `c7ddd13b12e40033b5031ff43e467065`) <b>The npz format is about 80MB while the mat format is about 550MB.</b><br/>Chinese user can also use BaiduYun to download from [here](http://pan.baidu.com/s/1nv4ZQI1).
 - [Microsoft COCO dataset](http://msvocds.blob.core.windows.net/coco2014/train2014.zip)
 
 ## Trained Models
-I have trained [models](https://pan.baidu.com/s/1i4DLXvZ) over 10 styles: wave, udnie, escher_sphere, flower, scream, denoised_starry, starry_bright, rain_princess, woman_matisse, mosaic. (You can click the "models" to download)
+I have trained [models](https://s3-us-west-2.amazonaws.com/wengaoye/ten_trained_models.zip) over 10 styles: wave, udnie, escher_sphere, flower, scream, denoised_starry, starry_bright, rain_princess, woman_matisse, mosaic. (You can click the "models" to download)<br/>Chinese user can also use BaiduYun to download from [here](https://pan.baidu.com/s/1i4DLXvZ).
 
 ## My Running Environment
 <b>Hardware</b>
