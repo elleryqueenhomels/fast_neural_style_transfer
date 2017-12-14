@@ -3,9 +3,12 @@
 Generative Neural Methods Based On Model Iteration
 
 ## Description
-Using a deep residual convolutional neural network as the image transformation network, and a VGG19 deep convolutional neural network which is pre-trained on ImageNet dataset to define and calculate the perceptual loss functions.<br />For a specific style, we train an image transformation network over Microsoft COCO dataset.<br />After training, we can use the model to transfer the style to any image only needing one forward computation.
+Using a Deep Residual Convolutional Neural Network as an Image Transformation Network (ITN). We train the ITN to transform input images into output images. We use a VGG19 which is pre-trained on ImageNet dataset as Loss Network to define two Perceptual Losses (Feature Reconstruction Loss & Style Reconstruction Loss) that measure perceptual differences in content and style between images. <br/>For a specific style, we train one ITN using MS-COCO dataset (about 12.6GB). After trained, we can use the ITN to transfer specific style to any image just performing one feed-forward computation.
 
 This code is based on Johnson et al. [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](https://arxiv.org/abs/1603.08155) [2016.03] and Ulyanov et al. [Instance Normalization: The Missing Ingredient for Fast Stylization](https://arxiv.org/abs/1607.08022) [2016.09].
+
+![itn_overview](https://user-images.githubusercontent.com/13844740/33978580-68dc57ea-e0db-11e7-9886-eafba2a436fd.jpg)
+System overview. Picture comes from Johnson et al. original paper. In my implementation, I replace the VGG-16 to a pre-trained VGG-19. I use 'relu4_2' layer to compute Feature Reconstruction Loss and use {'relu1_1', 'relu2_1', 'relu3_1', 'relu4_1', 'relu5_1'} layers to compute Style Reconstruction Loss.
 
 ## Results
 | style | output (generated image) |
