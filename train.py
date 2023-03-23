@@ -8,7 +8,6 @@ import image_transform_net as itn
 from loss_net import VGG, preprocess
 from utils import get_images
 
-
 CONTENT_LAYER = 'relu4_2'
 STYLE_LAYERS  = ('relu1_1', 'relu2_1', 'relu3_1', 'relu4_1', 'relu5_1')
 
@@ -42,8 +41,8 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
 
     # compute the style features
     style_features = {}
-    with tf.Graph().as_default(), tf.Session() as sess:
-        style_image = tf.placeholder(tf.float32, shape=style_shape, name='style_image')
+    with tf.Graph().as_default(), tf.compat.v1.Session() as sess:
+        style_image = tf.compat.v1.placeholder(tf.float32, shape=style_shape, name='style_image')
 
         # pass style_image through 'pretrained VGG-19 network'
         style_img_preprocess = preprocess(style_image)
@@ -57,8 +56,8 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
             style_features[style_layer] = gram
 
     # compute the perceptual losses
-    with tf.Graph().as_default(), tf.Session() as sess:
-        content_images = tf.placeholder(tf.float32, shape=input_shape, name='content_images')
+    with tf.Graph().as_default(), tf.compat.v1.Session() as sess:
+        content_images = tf.compat.v1.placeholder(tf.float32, shape=input_shape, name='content_images')
 
         # pass content_images through 'pretrained VGG-19 network'
         content_imgs_preprocess = preprocess(content_images)
@@ -78,7 +77,7 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
         # ** compute the feature reconstruction loss **
         content_size = tf.size(content_features[CONTENT_LAYER])
 
-        content_loss = 2 * tf.nn.l2_loss(output_net[CONTENT_LAYER] - content_features[CONTENT_LAYER]) / tf.to_float(content_size)
+        content_loss = 2 * tf.nn.l2_loss(output_net[CONTENT_LAYER] - content_features[CONTENT_LAYER]) / tf.cast(content_size, dtype=tf.float32)
 
         # ** compute the style reconstruction loss **
         style_losses = []
@@ -87,9 +86,9 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
             shape = tf.shape(features)
             num_images, height, width, num_filters = shape[0], shape[1], shape[2], shape[3]
             features = tf.reshape(features, [num_images, height*width, num_filters])
-            grams = tf.matmul(features, features, transpose_a=True) / tf.to_float(height * width * num_filters)
+            grams = tf.matmul(features, features, transpose_a=True) / tf.cast(height * width * num_filters, dtype=tf.float32)
             style_gram = style_features[style_layer]
-            layer_style_loss = 2 * tf.nn.l2_loss(grams - style_gram) / tf.to_float(tf.size(grams))
+            layer_style_loss = 2 * tf.nn.l2_loss(grams - style_gram) / tf.cast(tf.size(grams), dtype=tf.float32)
             style_losses.append(layer_style_loss)
 
         style_loss = tf.reduce_sum(tf.stack(style_losses))
@@ -100,18 +99,18 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
         y = tf.slice(output_images, [0, 0, 0, 0], [-1, height - 1, -1, -1]) - tf.slice(output_images, [0, 1, 0, 0], [-1, -1, -1, -1])
         x = tf.slice(output_images, [0, 0, 0, 0], [-1, -1,  width - 1, -1]) - tf.slice(output_images, [0, 0, 1, 0], [-1, -1, -1, -1])
 
-        tv_loss = tf.nn.l2_loss(x) / tf.to_float(tf.size(x)) + tf.nn.l2_loss(y) / tf.to_float(tf.size(y))
+        tv_loss = tf.nn.l2_loss(x) / tf.cast(tf.size(x), dtype=tf.float32) + tf.nn.l2_loss(y) / tf.cast(tf.size(y), dtype=tf.float32)
 
         # overall perceptual losses
         loss = content_weight * content_loss + style_weight * style_loss + tv_weight * tv_loss
 
         # Training step
-        train_op = tf.train.AdamOptimizer(LEARNING_RATE).minimize(loss)
+        train_op = tf.compat.v1.train.AdamOptimizer(LEARNING_RATE).minimize(loss)
 
-        sess.run(tf.global_variables_initializer())
+        sess.run(tf.compat.v1.global_variables_initializer())
 
         # saver = tf.train.Saver()
-        saver = tf.train.Saver(keep_checkpoint_every_n_hours=1)
+        saver = tf.compat.v1.train.Saver(keep_checkpoint_every_n_hours=1)
 
         # ** Start Training **
         step = 0
@@ -119,9 +118,9 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
 
         if debug:
             elapsed_time = datetime.now() - start_time
-            tf.logging.set_verbosity(tf.logging.INFO)
-            tf.logging.info('Elapsed time for preprocessing before actually train the model: %s' % elapsed_time)
-            tf.logging.info('Now begin to train the model...')
+            tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
+            tf.compat.v1.logging.info('Elapsed time for preprocessing before actually train the model: %s' % elapsed_time)
+            tf.compat.v1.logging.info('Now begin to train the model...')
             start_time = datetime.now()
 
         for epoch in range(EPOCHS):
@@ -148,17 +147,16 @@ def train(content_targets_path, style_target_path, content_weight, style_weight,
                         elapsed_time = datetime.now() - start_time
                         _content_loss, _style_loss, _tv_loss, _loss = sess.run([content_loss, style_loss, tv_loss, loss], feed_dict={content_images: content_batch})
 
-                        tf.logging.info('step: %d,  total loss: %f,  elapsed time: %s' % (step, _loss, elapsed_time))
-                        tf.logging.info('content loss: %f,  weighted content loss: %f' % (_content_loss, content_weight * _content_loss))
-                        tf.logging.info('style loss  : %f,  weighted style loss  : %f' % (_style_loss, style_weight * _style_loss))
-                        tf.logging.info('tv loss     : %f,  weighted tv loss     : %f' % (_tv_loss, tv_weight * _tv_loss))
-                        tf.logging.info('\n')
+                        tf.compat.v1.logging.info('step: %d,  total loss: %f,  elapsed time: %s' % (step, _loss, elapsed_time))
+                        tf.compat.v1.logging.info('content loss: %f,  weighted content loss: %f' % (_content_loss, content_weight * _content_loss))
+                        tf.compat.v1.logging.info('style loss  : %f,  weighted style loss  : %f' % (_style_loss, style_weight * _style_loss))
+                        tf.compat.v1.logging.info('tv loss     : %f,  weighted tv loss     : %f' % (_tv_loss, tv_weight * _tv_loss))
+                        tf.compat.v1.logging.info('\n')
 
         # ** Done Training & Save the model **
         saver.save(sess, save_path)
 
         if debug:
             elapsed_time = datetime.now() - start_time
-            tf.logging.info('Done training! Elapsed time: %s' % elapsed_time)
-            tf.logging.info('Model is saved to: %s' % save_path)
-
+            tf.compat.v1.logging.info('Done training! Elapsed time: %s' % elapsed_time)
+            tf.compat.v1.logging.info('Model is saved to: %s' % save_path)

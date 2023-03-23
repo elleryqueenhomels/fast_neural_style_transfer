@@ -6,7 +6,6 @@ import image_transform_net as itn
 
 from utils import get_images, save_images
 
-
 def generate(contents_path, model_path, is_same_size=False, resize_height=None, resize_width=None, save_path=None, prefix='stylized-', suffix=None):
     if isinstance(contents_path, str):
         contents_path = [contents_path]
@@ -18,19 +17,18 @@ def generate(contents_path, model_path, is_same_size=False, resize_height=None, 
         outputs = _handler2(contents_path, model_path, save_path=save_path, prefix=prefix, suffix=suffix)
         return outputs
 
-
 def _handler1(content_path, model_path, resize_height=None, resize_width=None, save_path=None, prefix=None, suffix=None):
     # get the actual image data, output shape: (num_images, height, width, color_channels)
     content_target = get_images(content_path, resize_height, resize_width)
 
-    with tf.Graph().as_default(), tf.Session() as sess:
+    with tf.Graph().as_default(), tf.compat.v1.Session() as sess:
         # build the dataflow graph
-        content_image = tf.placeholder(tf.float32, shape=content_target.shape, name='content_image')
+        content_image = tf.compat.v1.placeholder(tf.float32, shape=content_target.shape, name='content_image')
 
         output_image = itn.transform(content_image)
 
         # restore the trained model and run the style transferring
-        saver = tf.train.Saver()
+        saver = tf.compat.v1.train.Saver()
         saver.restore(sess, model_path)
 
         output = sess.run(output_image, feed_dict={content_image: content_target})
@@ -40,16 +38,15 @@ def _handler1(content_path, model_path, resize_height=None, resize_width=None, s
 
     return output
 
-
 def _handler2(content_path, model_path, save_path=None, prefix=None, suffix=None):
-    with tf.Graph().as_default(), tf.Session() as sess:
+    with tf.Graph().as_default(), tf.compat.v1.Session() as sess:
         # build the dataflow graph
-        content_image = tf.placeholder(tf.float32, shape=(1, None, None, 3), name='content_image')
+        content_image = tf.compat.v1.placeholder(tf.float32, shape=(1, None, None, 3), name='content_image')
 
         output_image = itn.transform(content_image)
 
         # restore the trained model and run the style transferring
-        saver = tf.train.Saver()
+        saver = tf.compat.v1.train.Saver()
         saver.restore(sess, model_path)
 
         output = []
@@ -62,4 +59,3 @@ def _handler2(content_path, model_path, save_path=None, prefix=None, suffix=None
         save_images(content_path, output, save_path, prefix=prefix, suffix=suffix)
 
     return output
-

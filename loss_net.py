@@ -10,7 +10,6 @@
 import numpy as np
 import tensorflow as tf
 
-
 MEAN_PIXEL = np.array([123.68, 116.779, 103.939]) # RGB
 
 VGG19_LAYERS = (
@@ -27,7 +26,6 @@ VGG19_LAYERS = (
     'conv5_1', 'relu5_1', 'conv5_2', 'relu5_2', 'conv5_3',
     'relu5_3', 'conv5_4', 'relu5_4'
 )
-
 
 class VGG(object):
     def __init__(self, weights_path, layers=VGG19_LAYERS):
@@ -55,15 +53,12 @@ class VGG(object):
         assert(len(net) == len(self.layers))
         return net
 
-
 def conv_layer(x, weight, bias):
     conv = tf.nn.conv2d(x, tf.constant(weight), strides=[1, 1, 1, 1], padding='SAME')
     return tf.nn.bias_add(conv, bias)
 
-
 def pool_layer(x):
     return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
-
 
 def load_vgg_weights(weights_path):
     kind = weights_path[-3:]
@@ -76,7 +71,6 @@ def load_vgg_weights(weights_path):
         print('Unrecognized file type: %s' % kind)
     return weights
 
-
 def load_from_npz(weights_path):
     params = np.load(weights_path)
     count = int(params['arr_0']) + 1
@@ -86,7 +80,6 @@ def load_from_npz(weights_path):
         bias = params['arr_%s' % (i + 1)]
         weights.append((kernel, bias))
     return weights
-
 
 def load_from_mat(weights_path):
     from scipy.io import loadmat
@@ -106,11 +99,8 @@ def load_from_mat(weights_path):
             weights.append((kernel, bias))
     return weights
 
-
 def preprocess(image, mean=MEAN_PIXEL):
     return image - mean
 
-
 def unprocess(image, mean=MEAN_PIXEL):
     return image + mean
-
