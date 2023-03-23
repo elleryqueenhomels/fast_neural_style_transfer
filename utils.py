@@ -4,8 +4,8 @@ import numpy as np
 
 from os import listdir, mkdir, sep
 from os.path import join, exists, splitext
-from scipy.misc import imread, imsave, imresize
-
+from imageio import imread, imsave
+from skimage.transform import resize
 
 def list_images(directory):
     images = []
@@ -19,7 +19,6 @@ def list_images(directory):
             images.append(join(directory, file))
     return images
 
-
 def get_images(paths, height=None, width=None):
     if isinstance(paths, str):
         paths = [paths]
@@ -29,14 +28,13 @@ def get_images(paths, height=None, width=None):
         image = imread(path, mode='RGB')
 
         if height is not None and width is not None:
-            image = imresize(image, [height, width], interp='nearest')
+            image = resize(image, [height, width])
 
         images.append(image)
 
     images = np.stack(images, axis=0)
 
     return images
-
 
 def save_images(paths, datas, save_path, prefix=None, suffix=None):
     if isinstance(paths, str):
@@ -61,4 +59,3 @@ def save_images(paths, datas, save_path, prefix=None, suffix=None):
         path = join(save_path, prefix + name + suffix + ext)
 
         imsave(path, data)
-
