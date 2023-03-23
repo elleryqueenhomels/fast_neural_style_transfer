@@ -1,15 +1,19 @@
 # Demo - train the style transfer network & use it to generate an image
 
-from __future__ import print_function
+import argparse
 
 from train import train
 from generate import generate
 from utils import list_images
 
+parser = argparse.ArgumentParser()
 
-IS_TRAINING = False
+parser.add_argument("--is_training", type=bool, default=False, help="Using training mode, default value is False")
+parser.add_argument("--vgg_path", default="imagenet-vgg-19-weights.npz", help="VGG weights file path")
 
-VGG_PATH  = './imagenet-vgg-19-weights.npz'
+args = parser.parse_args()
+
+VGG_PATH = args.vgg_path
 
 # format: {'style': [content_weight, style_weight, tv_weight]}
 STYLES = {
@@ -25,10 +29,9 @@ STYLES = {
     'mosaic':          [1.0,   5.0,  0.0],
 }
 
-
 def main():
 
-    if IS_TRAINING:
+    if args.is_training:
 
         content_targets = list_images('./MS_COCO') # path to training dataset
 
@@ -63,7 +66,5 @@ def main():
             print('\ntype(generated_images):', type(generated_images))
             print('\nlen(generated_images):', len(generated_images), '\n')
 
-
 if __name__ == '__main__':
     main()
-
